@@ -36,7 +36,6 @@ jobs:
         arch: [x86_64]
         target: [default]
         cores: [4] # , 6
-        ram: [8192]
         os: [ubuntu-latest] # , macos-latest
         exclude:
         - api-level: 28
@@ -46,10 +45,12 @@ jobs:
           target: google_apis_playstore
         - api-level: 28
           arch: x86
-          ram: 4096
         - api-level: 29
           arch: x86
+        - arch: x86
           ram: 4096
+        - arch: x86_64
+          ram: 8192
     runs-on: ubuntu-latest
     env:
       EMULATOR_RAM_SIZE: ${{ matrix.ram }}
