@@ -50,7 +50,7 @@ jobs:
         - api-level: 29
           arch: x86
           ram: 4096
-    runs-on: ${{ matrix.os }}
+    runs-on: ubuntu-latest
     env:
       EMULATOR_RAM_SIZE: ${{ matrix.ram }}
       EMULATOR_CORES: ${{ matrix.cores }}
