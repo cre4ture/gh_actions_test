@@ -24,6 +24,9 @@ env:
   EMULATOR_DISK_SIZE: 12GB
   EMULATOR_HEAP_SIZE: 2048M
   EMULATOR_BOOT_TIMEOUT: 1200 # 20min
+  VM_CORES: 4
+  VM32_RAM: 4096
+  VM64_RAM: 8192
 
 jobs:
   test_android:
@@ -33,16 +36,16 @@ jobs:
       fail-fast: false
       matrix:
         include:
-        - { api-level: 28, arch: x86, cores: 4, target: google_apis_playstore, os: ^ubuntu-latest }
-        - { api-level: 28, arch: x86_64, cores: 4, target: google_apis_playstore, os: ubuntu-latest }
-        - { api-level: 29, arch: x86, cores: 4, target: google_apis_playstore, os: ubuntu-latest }
-        - { api-level: 29, arch: x86_64, cores: 4, target: default, os: ubuntu-latest }
-        - { api-level: 30, arch: x86, cores: 4, target: google_apis, os: ubuntu-latest }
-        - { api-level: 30, arch: x86_64, cores: 4, target: google_apis, os: ubuntu-latest }
-        - { api-level: 31, arch: x86_64, cores: 4, target: default, os: ubuntu-latest }
-        - { api-level: 32, arch: x86_64, cores: 4, target: default, os: ubuntu-latest }
-        - { api-level: 33, arch: x86_64, cores: 4, target: default, os: ubuntu-latest }
-        - { api-level: 34, arch: x86_64, cores: 4, target: default, os: ubuntu-latest }
+        - { api-level: 28, arch: x86   , cores: "${{ env.VM_CORES }}", ram: "${{ env.VM32_RAM }}", target: google_apis_playstore, os: ubuntu-latest }
+        - { api-level: 28, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: google_apis_playstore, os: ubuntu-latest }
+        - { api-level: 29, arch: x86   , cores: "${{ env.VM_CORES }}", ram: "${{ env.VM32_RAM }}", target: google_apis_playstore, os: ubuntu-latest }
+        - { api-level: 29, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
+        - { api-level: 30, arch: x86   , cores: "${{ env.VM_CORES }}", ram: "${{ env.VM32_RAM }}", target: google_apis, os: ubuntu-latest }
+        - { api-level: 30, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: google_apis, os: ubuntu-latest }
+        - { api-level: 31, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
+        - { api-level: 32, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
+        - { api-level: 33, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
+        - { api-level: 34, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
     runs-on: ubuntu-latest
     env:
       EMULATOR_RAM_SIZE: ${{ matrix.ram }}
