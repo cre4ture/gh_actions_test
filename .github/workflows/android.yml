@@ -68,4 +68,4 @@ jobs:
       run: |
         echo "os: ${{ matrix.os }}, cores: ${{ matrix.cores }}, ram: ${{ matrix.ram }},
         echo "api-level: ${{ matrix.api-level }}, target: ${{ matrix.target }}, arch: ${{ matrix.arch }}
-        echo "matrix: ${{ matrix }}"
+        echo "matrix: ${{ toJSON(matrix) }}"
