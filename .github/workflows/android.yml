@@ -50,6 +50,7 @@ jobs:
     outputs:
       matrix: ${{ steps.create_matrix.outputs.matrix }}
   test_android:
+    needs: prepare
     name: Test builds
     timeout-minutes: 90
     strategy:
