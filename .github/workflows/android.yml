@@ -32,25 +32,19 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        api-level: [28,29,30,31,32,33,34]
-        arch: [x86_64]
-        target: [default]
+        include:
+        - { api-level: 28, arch: x86, target: google_apis_playstore }
+        - { api-level: 28, arch: x86_64, target: google_apis_playstore }
+        - { api-level: 29, arch: x86, target: google_apis_playstore }
+        - { api-level: 29, arch: x86_64, target: default }
+        - { api-level: 30, arch: x86, target: google_apis }
+        - { api-level: 30, arch: x86_64, target: google_apis }
+        - { api-level: 31, arch: x86_64, target: default }
+        - { api-level: 32, arch: x86_64, target: default }
+        - { api-level: 33, arch: x86_64, target: default }
+        - { api-level: 34, arch: x86_64, target: default }
         cores: [4] # , 6
         os: [ubuntu-latest] # , macos-latest
-        exclude:
-        - api-level: 28
-          target: default # fails at f16c intrinsic
-        include:
-        - api-level: 28
-          target: google_apis_playstore
-        - api-level: 28
-          arch: x86
-        - api-level: 29
-          arch: x86
-        - arch: x86
-          ram: 4096
-        - arch: x86_64
-          ram: 8192
     runs-on: ubuntu-latest
     env:
       EMULATOR_RAM_SIZE: ${{ matrix.ram }}
