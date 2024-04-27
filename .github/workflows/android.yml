@@ -18,6 +18,7 @@ concurrency:
   cancel-in-progress: ${{ github.ref != 'refs/heads/main' }}
 
 env:
+  RUNNER_OS: ubuntu-latest
   TERMUX: v0.118.0
   KEY_POSTFIX: nextest+rustc-hash+adb+sshd+upgrade+XGB+inc18
   COMMON_EMULATOR_OPTIONS: -no-window -noaudio -no-boot-anim -camera-back none -gpu swiftshader_indirect
@@ -29,23 +30,32 @@ env:
   VM64_RAM: 8192
 
 jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Create matrix
+        id: create_matrix
+        uses: fabiocaccamo/create-matrix-action@v3
+        with:
+          matrix: |
+            api-level {28}         , arch {x86}   , target: {google_apis_playstore}, cores {${{ env.VM_CORES }}}, ram {${{ env.VM32_RAM }}}, os {${{ env.RUNNER_OS }}}
+            api-level {28}         , arch {x86_64}, target: {google_apis_playstore}, cores {${{ env.VM_CORES }}}, ram {${{ env.VM64_RAM }}}, os {${{ env.RUNNER_OS }}}
+            api-level {29}         , arch {x86}   , target: {default}              , cores {${{ env.VM_CORES }}}, ram {${{ env.VM32_RAM }}}, os {${{ env.RUNNER_OS }}}
+            api-level {29}         , arch {x86_64}, target: {default}              , cores {${{ env.VM_CORES }}}, ram {${{ env.VM64_RAM }}}, os {${{ env.RUNNER_OS }}}
+            api-level {30}         , arch {x86}   , target: {google_apis}          , cores {${{ env.VM_CORES }}}, ram {${{ env.VM32_RAM }}}, os {${{ env.RUNNER_OS }}}
+            api-level {30}         , arch {x86_64}, target: {google_apis}          , cores {${{ env.VM_CORES }}}, ram {${{ env.VM64_RAM }}}, os {${{ env.RUNNER_OS }}}
+            api-level {31,32,33,34}, arch {x86_64}, target: {default}              , cores {${{ env.VM_CORES }}}, ram {${{ env.VM64_RAM }}}, os {${{ env.RUNNER_OS }}}
+    outputs:
+      matrix: ${{ steps.create_matrix.outputs.matrix }}
   test_android:
     name: Test builds
     timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
-        include:
-        - { api-level: 28, arch: x86   , cores: "${{ env.VM_CORES }}", ram: "${{ env.VM32_RAM }}", target: google_apis_playstore, os: ubuntu-latest }
-        - { api-level: 28, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: google_apis_playstore, os: ubuntu-latest }
-        - { api-level: 29, arch: x86   , cores: "${{ env.VM_CORES }}", ram: "${{ env.VM32_RAM }}", target: google_apis_playstore, os: ubuntu-latest }
-        - { api-level: 29, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
-        - { api-level: 30, arch: x86   , cores: "${{ env.VM_CORES }}", ram: "${{ env.VM32_RAM }}", target: google_apis, os: ubuntu-latest }
-        - { api-level: 30, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: google_apis, os: ubuntu-latest }
-        - { api-level: 31, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
-        - { api-level: 32, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
-        - { api-level: 33, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
-        - { api-level: 34, arch: x86_64, cores: "${{ env.VM_CORES }}", ram: "${{ env.VM64_RAM }}", target: default, os: ubuntu-latest }
+        include: ${{fromJson(needs.prepare.outputs.matrix)}}
     runs-on: ubuntu-latest
     env:
       EMULATOR_RAM_SIZE: ${{ matrix.ram }}
